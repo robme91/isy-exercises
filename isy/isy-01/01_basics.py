@@ -31,6 +31,21 @@ import time
 # Tip: you need to define a transformation Matrix M
 # see result image
 
-
-
-
+# Aufgabe 2.1 + 2.2
+lennaCol = cv2.imread('images/Lenna.png', 1)
+lennaGrey = cv2.cvtColor(cv2.imread('images/Lenna.png', 0), cv2.COLOR_GRAY2RGB)
+rows, cols = lennaCol.shape[:2]
+img = np.zeros((rows, cols * 2, 3), np.uint8)
+img[:, 0:cols] = lennaCol
+img[:, cols: np.size(img, 1)] = lennaGrey
+cv2.namedWindow("Lenna")
+cv2.imshow("Lenna", img)
+key = cv2.waitKey(0) & cv2.waitKey(0xFF)
+if key == ord('q'):
+    cv2.destroyAllWindows()
+elif key == ord('t'):
+    print("Verschieben")
+elif key == ord('r'):
+    print("Rotieren")
+# else:
+#     print("Drücken Sie die Tasten q - zum Beenden, r - zum Rotieren oder t - zum Verschieben des Bildes")
