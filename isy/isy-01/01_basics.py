@@ -32,6 +32,7 @@ import time
 # see result image
 
 # Aufgabe 2.1 + 2.2
+
 lennaCol = cv2.imread('images/Lenna.png', 1)
 lennaGrey = cv2.cvtColor(cv2.imread('images/Lenna.png', 0), cv2.COLOR_GRAY2RGB)
 rows, cols = lennaCol.shape[:2]
@@ -40,12 +41,23 @@ img[:, 0:cols] = lennaCol
 img[:, cols: np.size(img, 1)] = lennaGrey
 cv2.namedWindow("Lenna")
 cv2.imshow("Lenna", img)
-key = cv2.waitKey(0) & cv2.waitKey(0xFF)
-if key == ord('q'):
-    cv2.destroyAllWindows()
-elif key == ord('t'):
-    print("Verschieben")
-elif key == ord('r'):
-    print("Rotieren")
-# else:
-#     print("Drücken Sie die Tasten q - zum Beenden, r - zum Rotieren oder t - zum Verschieben des Bildes")
+while 1:
+    key = cv2.waitKey(0) & cv2.waitKey(0xFF)
+    if key == ord('q'):
+        cv2.destroyAllWindows()
+        break
+    elif key == ord('t'):
+        print("Verschieben um: ")
+        tM = np.float32([[1, 0, 10], [0, 1, 0]])
+        print(tM)
+        img = cv2.warpAffine(img, tM, (cols * 2, rows))
+        cv2.imshow("Lenna", img)
+    elif key == ord('r'):
+        print("Rotieren um: ")
+        rM = cv2.getRotationMatrix2D((cols, rows/2), 30, 1)     # bei cols * 2 / 2 kürzt sich die 2 weg
+        print(rM)
+        img = cv2.warpAffine(img, rM, (cols * 2, rows))
+        cv2.imshow("Lenna", img)
+        # Soll das so sein, dass der Rest des Bildes der nicht zu sehen ist verschwindet?
+    else:
+        print("Drücken Sie die Tasten q - zum Beenden, r - zum Rotieren oder t - zum Verschieben des Bildes")
