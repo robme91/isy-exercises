@@ -45,13 +45,17 @@ def convolution_2d(img, kernel):
     :param kernel: convolution matrix - 3x3, or 5x5 matrix
     :return: result of the convolution
     """
-    # TODO write convolution of arbritrary sized convolution here
     # Hint: you need the kernelsize
 
     offset = int(kernel.shape[0]/2)
     newimg = np.zeros(img.shape)
 
     # YOUR CODE HERE
+    for iR in range(offset, len(img) - offset):
+        for iC in range(offset, len(img[iR]) - offset):
+            mat = img[iR - offset:iR + offset + 1, iC - offset:iC + offset + 1]
+            pixel = (mat * kernel).sum()
+            newimg[iR, iC] = pixel
 
     return newimg
 
@@ -59,8 +63,10 @@ def convolution_2d(img, kernel):
 if __name__ == "__main__":
 
     # 1. load image in grayscale
+    print("Los gehts")
+    img = cv2.imread('images/Lenna.png', 0)
     # 2. convert image to 0-1 image (see im2double)
-
+    img = im2double(img)
 
     # image kernels
     sobelmask_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
@@ -68,12 +74,20 @@ if __name__ == "__main__":
     gk = make_gaussian(11)
 
     # 3 .use image kernels on normalized image
+    sobel_x = convolution_2d(img, sobelmask_x)
+    sobel_y = convolution_2d(img, sobelmask_y)
 
     # 4. compute magnitude of gradients
+    gx = sobel_x * convolution_2d(img, gk)
+    gy = sobel_y * convolution_2d(img, gk)
+    mog = np.sqrt(gx **2, gy **2)
+    angle = np.arctan2(gy, gx)
 
     # Show resulting images
     cv2.imshow("sobel_x", sobel_x)
     cv2.imshow("sobel_y", sobel_y)
     cv2.imshow("mog", mog)
+    cv2.imshow("angle", angle)
+    print("Feddig")
     cv2.waitKey(0)
     cv2.destroyAllWindows()
