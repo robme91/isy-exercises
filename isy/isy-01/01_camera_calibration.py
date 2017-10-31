@@ -8,21 +8,37 @@ import glob
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
-objp = np.zeros((6*7,3), np.float32)
-objp[:,:2] = np.mgrid[0:7,0:6].T.reshape(-1,2)
+objp = np.zeros((7*7,3), np.float32)
+objp[:,:2] = np.mgrid[0:7,0:7].T.reshape(-1,2)
 
 # Arrays to store object points and image points from all the images.
 objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
-images = glob.glob('images/*.jpg')
+images = []
 
-for fname in images:
-    img = cv2.imread(fname)
-    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+cap = cv2.VideoCapture(0)
+imgCount = 0
+
+while imgCount <= 10:
+    ret, frame = cap.read()
+    cv2.imshow('frame', frame)
+    key = cv2.waitKey(1)
+    if key == ord('q'):
+        break
+    if key == ord('k'):
+        images.append(frame)
+        print("Bild geschossen")
+        imgCount +=1
+
+undistImg = images[0].copy()
+
+
+for img in images:
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Find the chess board corners
-    ret, corners = cv2.findChessboardCorners(gray, (7,6),None)
+    ret, corners = cv2.findChessboardCorners(gray, (7, 7),None)
 
     # If found, add object points, image points (after refining them)
     if ret == True:
@@ -32,14 +48,14 @@ for fname in images:
         imgpoints.append(corners2)
 
         # Draw and display the corners
-        img = cv2.drawChessboardCorners(img, (7,6), corners2,ret)
+        img = cv2.drawChessboardCorners(img, (7, 7), corners2,ret)
         cv2.imshow('img',img)
         cv2.waitKey(500)
 
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None)
 
 
-        img = cv2.imread('images/left12.jpg')
+        img = undistImg
         h,  w = img.shape[:2]
         newcameramtx,roi = cv2.getOptimalNewCameraMatrix(mtx,dist,(w,h),1,(w,h))
 
@@ -62,4 +78,5 @@ for i in range(len(objpoints)):
 
 print("mean error: ", mean_error/len(objpoints), " total error: ", tot_error)
 
+cap.release()
 cv2.destroyAllWindows()
