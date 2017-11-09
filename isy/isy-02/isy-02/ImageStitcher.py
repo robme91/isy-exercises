@@ -37,7 +37,7 @@ class ImageStitcher:
             if len(m) == 2 and m[0].distance < m[1].distance * self.distanceRatio:
                 matches.append((m[0].trainIdx, m[0].queryIdx))
 
-        print "matches:", len(matches)
+        print("matches:", len(matches))
         # we need to compute a homography - more next course
         # computing a homography requires at least 4 matches
         if len(matches) > 4:
@@ -93,9 +93,14 @@ class ImageStitcher:
 
         # YOUR CODE HERE
         # 1. create feature extraction
+        sift = cv2.xfeatures2d.SIFT_create()
         # 2. detect and compute keypoints and descriptors for the first image
+        kp1, desc1 = sift.detectAndCompute(self.imagelist[0], None)
 
+        matchList = []
+        panoramaImg = []
         # 3. loop through the remaining images and detect and compute keypoints + descriptors
+
 
         # 4. match features between the two images consecutive images and check if the
         # result might be None.
