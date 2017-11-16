@@ -124,6 +124,7 @@ class ImageStitcher:
             cols2 = img2.shape[1]
             width = cols1 + cols2
             height = img1.shape[0]
+            #to know which image had to be warped, look it up in https://www.pyimagesearch.com/2016/01/11/opencv-panorama-stitching/
             panoramaImg = cv2.warpPerspective(img1, H, (width, height))
             panoramaImg[0:height, 0:cols2] = img2
             matchingImg = self.draw_matches(img1, img2, kp1, kp2, matches, status)
