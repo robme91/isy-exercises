@@ -134,3 +134,5 @@ class ImageStitcher:
 
         # 6. return the resulting stitched image
         return (matchList, panoramaImg)
+
+# TODO Skalierung einbauen, so dass alles zu sehen
