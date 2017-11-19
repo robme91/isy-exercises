@@ -23,11 +23,18 @@ def distance(a, b):
 def create_keypoints(w, h):
     keypoints = []
     keypointSize = 11
-    dist = 10
-
-    for y in range(0,h, dist):
-        for x in range(0, w, dist):
+    # Erhöhung der KPs bringt nicht wirklich mehr erfolg...
+    kpsPerDirection = 25
+    stepDistW = w / kpsPerDirection
+    stepDistH = h / kpsPerDirection
+    y = 0
+    x = 0
+    while y <= h:
+        while x <= w:
             keypoints.append(cv2.KeyPoint(x, y, keypointSize))
+            x += stepDistW
+        x = 0
+        y += stepDistH
     return keypoints
 
 def create_descriptor(img):
@@ -38,7 +45,7 @@ def create_descriptor(img):
     return desc
 
 
-def create_prio_queue(img):
+def create_prio_queue(img, descriptors):
     """
     creates priority queue on given image,
     and returns the queue and the original image
@@ -84,17 +91,19 @@ while True:
     print("Press 'c' for car search, 'f' for face search, 'b' for flower search or 'q' to quit")
     key = cv2.waitKey(0) & cv2.waitKey(0xFF)
     if key == ord('q'):
-        cv2.destroyAllWindows()
         break
     elif key == ord('c'):
-        q = create_prio_queue(car)
+        q = create_prio_queue(car, descriptors)
     elif key == ord('f'):
-        q = create_prio_queue(face)
+        q = create_prio_queue(face, descriptors)
     elif key == ord('b'):
-        q = create_prio_queue(flower)
+        q = create_prio_queue(flower, descriptors)
     while not q.empty():
         dist, img = q.get()
         title = "Prio " + str(prio)
         cv2.imshow(title, img)
         prio += 1
         key = cv2.waitKey(0) & cv2.waitKey(0xFF)
+        if key == ord('q'):
+            break
+cv2.destroyAllWindows()
