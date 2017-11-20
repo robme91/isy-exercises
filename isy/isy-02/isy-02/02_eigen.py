@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import numpy.linalg as lina
 
 ###############################################################
 #
@@ -34,7 +35,7 @@ corner[2][2] = 0.0
 flat = np.zeros((3, 3, 1), np.float32)
 
 # choose which one to use to compute eigenvector / eigenvalues
-img = edge
+img = corner
 
 # simple gradient extraction
 k = np.matrix([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
@@ -43,7 +44,7 @@ ktrans = k.transpose()
 Gx = cv2.filter2D(img, -1, k)
 Gy = cv2.filter2D(img, -1, ktrans)
 
-#print "dx / dy", Gx, Gy
+print("dx / dy", Gx, Gy)
 
 # this is the 2x2 matrix we need to evaluate
 # the Harris corners
@@ -52,12 +53,15 @@ eigMat = np.zeros((2, 2), np.float32)
 # compute values for matrix eigMat and fill matrix with
 # necessary values
 
-# YOUR CODE HERE
+for y in range(0, Gy.shape[0]):
+    for x in range(0, Gy.shape[1]):
+        iX = Gx[x,y]
+        iY = Gy[x,y]
+        eigMat += [[iX**2, iX*iY], [iY*iX, iY**2]]
 
 # compute eigenvectors and eigenvalues using the numpy
 # linear algebra package
-
-# YOUR CODE HERE
+w, v = lina.eig(eigMat)
 
 # out and show the image
 print("matrix:", eigMat, '\n')
