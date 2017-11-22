@@ -35,7 +35,7 @@ corner[2][2] = 0.0
 flat = np.zeros((3, 3, 1), np.float32)
 
 # choose which one to use to compute eigenvector / eigenvalues
-img = corner
+img = flat
 
 # simple gradient extraction
 k = np.matrix([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
