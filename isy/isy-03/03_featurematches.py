@@ -23,11 +23,9 @@ while True:
         break
 
     markerImg = cv2.imread('./images/marker.jpg', 1)
-    #grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     sift = cv2.xfeatures2d.SIFT_create()
     kpFrame, descFrame = sift.detectAndCompute(frame, None)
     kpMarker, descMarker = sift.detectAndCompute(markerImg, None)
-    #cv2.drawKeypoints(grayFrame, kp, frame,flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
     imgStitcher = ImageStitcher([markerImg, frame])
     # use the match method from img stitcher because it uses already the brute-force matcher and build the status param
     result = imgStitcher.match_keypoints(kpMarker, kpFrame, descMarker, descFrame)
