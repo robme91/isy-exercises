@@ -84,22 +84,46 @@ class Ransac:
         :return:
         """
         self.current_inliers = []
-        score = 0
-        idx = 0
 
         # sample two random points from point set
+        #TODO shall those two points be also included to the current inliers?
+        rand1 = np.random.randint(0, len(self.points[0]) - 1)
+        rand2 = np.random.randint(0, len(self.points[0]) - 1)
+        point1 = self.points[0:, rand1]
+        point2 = self.points[0:, rand2]
+        # find two definitely different points
+        while np.array_equal(point1, point2):
+            rand2 = np.random.randint(0, len(self.points[0]) - 1)
+            point2 = self.points[0:, rand2]
 
         # compute line parameters m / b and create new line
-
+        point1_x, point1_y = point1
+        point2_x, point2_y = point2
+        m = (point2_y - point1_y) / (point2_x - point1_x)
+        b = m * (- point1_x) + point1_y
+        line = Line(m, b)
 
         # loop over all points
-        # compute error of all points and add to inliers of
+        # compute error of all points and add to inliers if
         # err smaller than threshold update score, otherwise add error/threshold to score
+        #TODO don't unerstand what shall be added to score here. Must error always sumed to score or is the "error/threshold" a math operation? Then why i should do this
+        score = 0
+        for idx in range(0, len(self.points[0])):
+            point = self.points[0:, idx]
+            err = self.estimate_error(point, line)
+            if err < self.threshold:
+                self.current_inliers.append(point)
+            score += err
 
         # if score < self.bestScore: update the best model/inliers/score
         # please do look at resources in the internet :)
+        # TODO why? in script it is the size of inliers that should be used
+        if len(self.current_inliers) > len(self.best_inliers):
+            self.best_inliers = self.current_inliers
+            self.best_model = line
+            self.best_score = score
 
-        #print iter, "  :::::::::: bestscore: ", self.best_score, " bestModel: ", self.best_model.m, self.best_model.b
+        print(iter, "  :::::::::: bestscore: ", self.best_score, " bestModel: ", self.best_model.m, self.best_model.b)
 
     def run(self):
         """
@@ -110,18 +134,35 @@ class Ransac:
             self.step(i)
 
 
-rpg = RansacPointGenerator(100,45)
-print(rpg.points)
+#create different point arrays
+rpg1 = RansacPointGenerator(100, 45)
+#print(rpg1.points)
+rpg2 = RansacPointGenerator(40, 150)
+#print(rpg2.points)
+rpg3 = RansacPointGenerator(60, 60)
+#print(rpg3.points)
+rpgArr = [rpg1, rpg2, rpg3]
 
-ransac = Ransac(rpg.points, 0.05)
-#ransac.run()
+#create different threasholds
+th1 = 0.01
+th2 = 0.05
+th3 = 0.5
+thArr = [th1, th2, th3]
 
-# print rpg.points.shape[1]
-plt.plot(rpg.points[0,:], rpg.points[1,:], 'ro')
-m = ransac.best_model.m
-b = ransac.best_model.b
-plt.plot([0, 1], [m*0 + b, m*1+b], color='k', linestyle='-', linewidth=2)
-# #
-plt.axis([0, 1, 0, 1])
+for rpg in rpgArr:
+    for th in thArr:
+        ransac = Ransac(rpg.points, th)
+        ransac.run()
+
+        # print rpg.points.shape[1]
+        #plt.subplot().set_title('Threshold: {0} Inliers: {1} Outliers: {2}'.format(th, rpg.numpointsInlier, rpg.numpointsOutlier))
+        plt.figure()
+        plt.plot(rpg.points[0, :], rpg.points[1, :], 'ro')
+        m = ransac.best_model.m
+        b = ransac.best_model.b
+        plt.plot([0, 1], [m*0 + b, m*1+b], color='k', linestyle='-', linewidth=2)
+        # #
+        plt.axis([0, 1, 0, 1])
+        plt.title('Threshold: {0} Inliers: {1} Outliers: {2}'.format(th, rpg.numpointsInlier, rpg.numpointsOutlier))
+
 plt.show()
-
