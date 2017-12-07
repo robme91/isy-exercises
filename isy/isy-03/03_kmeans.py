@@ -12,7 +12,7 @@ from collections import defaultdict
 ############################################################
 
 
-##################### Code inspired by Tom Oberhauser ############################################
+##################### Whole Code inspired by Tom Oberhauser ############################################
 
 
 # implement distance metric - e.g. squared distances between pixels
