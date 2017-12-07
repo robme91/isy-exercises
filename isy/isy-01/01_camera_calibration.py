@@ -53,6 +53,7 @@ for img in images:
         cv2.waitKey(500)
 
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None)
+        print("Cam distance", dist)
 
 
         img = undistImg

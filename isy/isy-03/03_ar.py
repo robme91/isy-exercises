@@ -27,7 +27,7 @@ def render_virtual_object(img, x_start, y_start, x_end, y_end, quad):
     # define vertices, edges and colors of your 3D object, e.g. cube
 
     # YOUR CODE HERE
-    z = 0.3
+    z = 0.5
     vertices = np.float32([[0, 0, 0],      # idx 0
                            [1, 0, 0],      # idx 1
                            [1, 1, 0],      # idx 2
@@ -44,10 +44,10 @@ def render_virtual_object(img, x_start, y_start, x_end, y_end, quad):
              (1, 5),        # bridge to second rec
              (2, 6),        # bridge to second rec
              (3, 7),        # bridge to second rec
-             (1, 2),        # sec rec
-             (1, 2),        # sec rec
-             (1, 2),        # sec rec
-             (1, 2)]        # sec rec
+             (4, 5),        # sec rec
+             (5, 6),        # sec rec
+             (6, 7),        # sec rec
+             (7, 4)]        # sec rec
 
     color_lines = (0, 0, 0)
 
@@ -64,8 +64,8 @@ def render_virtual_object(img, x_start, y_start, x_end, y_end, quad):
     # find object pose from 3D-2D point correspondences of the 3d quad using Levenberg-Marquardt optimization
     # in order to work we need K (given above and YOUR distortion coefficients from Assignment 2 (camera calibration))
     # YOUR VALUES HERE
-    # dist_coef = np.array([]) put cam calli values (dist from cv2.calibrateCamera) in here
-    dist_coef = None   #TODO not read out the cam values till now
+    dist_coef = np.array([0.55783498, -2.71676998, -0.04593394,  0.01823446,  8.48627241]) # taken from cam calli output
+    #dist_coef = None
 
     # compute extrinsic camera parameters using cv2.solvePnP
     # YOUR CODE HERE
@@ -73,7 +73,7 @@ def render_virtual_object(img, x_start, y_start, x_end, y_end, quad):
 
     # transform vertices: scale and translate form 0 - 1, in window size of the marker
     scale = [x_end-x_start, y_end-y_start, x_end-x_start]
-    trans = [x_start, y_start, -x_end-x_start]
+    trans = [x_start, y_start, 0]
 
     verts = scale * vertices + trans
 
@@ -102,7 +102,7 @@ while True:
     kpFrame, descFrame = sift.detectAndCompute(vis, None)
     if descMarker is None or descFrame is None:
         continue
-    matches = bfMatcher.knnMatch(descFrame, descMarker, 2)
+    matches = bfMatcher.knnMatch(descFrame, descMarker, k=2)
 
     # filter matches by distance [Lowe2004]
     matches = [match[0] for match in matches if len(match) == 2 and
@@ -141,7 +141,7 @@ while True:
 
     if status is None:      # sometimes status can be none
         continue
-    mask = mask.ravel() != 0
+    mask = status.ravel() != 0
     if mask.sum() < min_matches:
         cv2.imshow('Interactive Systems: AR Tracking', vis)
         key = cv2.waitKey(15) & 0xFF
@@ -156,9 +156,9 @@ while True:
     # YOUR CODE HERE
     h1, w1 = markerImg.shape[:2]
     quad = [np.array([0, 0], dtype=np.float32),     # up left
-            np.array([w1, 0], dtype=np.float32),    # up right
             np.array([0, h1], dtype=np.float32),    # bottom left
             np.array([w1, h1], dtype=np.float32),    # bottom right
+            np.array([w1, 0], dtype=np.float32),    # up right
             ]
 
     # perspectiveTransform needs a 3-dimensional array
