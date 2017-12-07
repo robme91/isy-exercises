@@ -169,7 +169,7 @@ while True:
 
     # render quad in image plane and feature points as circle using cv2.polylines + cv2.circle
     # YOUR CODE HERE
-    cv2.polylines(vis, [quad.astype(dtype=np.int)], isClosed=True, color=(0,0,255), thickness=2)
+    cv2.polylines(vis, [quad.astype(dtype=np.int)], isClosed=True, color=(0,80,255), thickness=2)
     for fp1 in p1:
         fp1 = fp1.astype(np.int)
         cv2.circle(vis, (fp1[0], fp1[1]), 10, (0, 255, 0))
