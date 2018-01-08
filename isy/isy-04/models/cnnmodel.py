@@ -39,7 +39,7 @@ class CNNModel:
         '''
             configure the model with an own architecture
         '''
-        model.add(Conv2D(32, (5, 5), padding='same', activation='relu', input_shape=(28, 28, 1)))   # add input layer, with shape of images= 28x28 in gray -> 28,28,1
+        model.add(Conv2D(64, (5, 5), padding='same', activation='relu', input_shape=(28, 28, 1)))   # add input layer, with shape of images= 28x28 in gray -> 28,28,1
         model.add(Dropout(0.5))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.5))
