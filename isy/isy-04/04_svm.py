@@ -52,6 +52,7 @@ sift = cv2.xfeatures2d.SIFT_create()
 labels = {1: 'car', 2: 'face', 3: 'flower'}
 x_train = np.array(1)
 y_train = np.array(1)
+# TODO eigene liste nur mit bild und passender nummer, dann durch liste gehen und label und descriptors übernehmen. so kann das erste element für y_train und x_train einfach aus der train liste herausgenommen werden
 for labelNum, labelCaption in labels.items():
     trainImages = glob.glob('./images/db/train/{}/*.jpg'.format(labelCaption + 's'))
     for imgPath in trainImages:

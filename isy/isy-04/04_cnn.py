@@ -62,7 +62,7 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 X_train, X_test = CNNModel.reshape_input_data(X_train, X_test)
 
 # hyperparameter
-nb_epoch = 20    # TODO erhörhen
+nb_epoch = 50    # TODO erhörhen
 batch_size = 128
 
 #model = FCModel.load_model(nb_classes)
